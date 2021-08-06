@@ -28,9 +28,33 @@ public class ReservationServiceTest {
         Schedule schedule = new Schedule();
 
         LocalDateTime startDateTime = LocalDateTime.now().plusDays(2);
-
         schedule.setStartDateTime(startDateTime);
 
-        Assert.assertEquals(reservationService.getRefundValue(Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build()), new BigDecimal(10));
+        Assert.assertEquals(reservationService.getRefundValue(Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build()),
+                new BigDecimal(10));
+
+        startDateTime = LocalDateTime.now().plusHours(23).minusMinutes(1);
+        schedule.setStartDateTime(startDateTime);
+
+        Assert.assertEquals(reservationService.getRefundValue(Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build()),
+                new BigDecimal(10).multiply(new BigDecimal("0.75")));
+
+        startDateTime = LocalDateTime.now().plusHours(12).minusMinutes(1);
+        schedule.setStartDateTime(startDateTime);
+
+        Assert.assertEquals(reservationService.getRefundValue(Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build()),
+                new BigDecimal(10).multiply(new BigDecimal("0.5")));
+
+        startDateTime = LocalDateTime.now().plusHours(2).minusMinutes(1);
+        schedule.setStartDateTime(startDateTime);
+
+        Assert.assertEquals(reservationService.getRefundValue(Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build()),
+                new BigDecimal(10).multiply(new BigDecimal("0.25")));
+
+        startDateTime = LocalDateTime.now();
+        schedule.setStartDateTime(startDateTime);
+
+        Assert.assertEquals(reservationService.getRefundValue(Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build()),
+                new BigDecimal(0));
     }
 }
